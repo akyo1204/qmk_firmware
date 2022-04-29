@@ -16,18 +16,18 @@ enum layer_number {
 
 #define KC_ KC_TRNS
 #define KC_RST RESET
-#define KC_L_SPC LT(_LOWER, KC_SPC)  // lower
-#define KC_R_ENT LT(_RAISE, KC_ENT)  // raise
-#define KC_G_JA LGUI_T(KC_LANG1)     // cmd or win
-#define KC_G_EN LGUI_T(KC_LANG2)     // cmd or win
-#define KC_C_BS LCTL_T(KC_BSPC)      // ctrl
-#define KC_A_DEL ALT_T(KC_DEL)       // alt
+#define KC_L_SPC LT(_LOWER, KC_SPC) // lower
+#define KC_R_ENT LT(_RAISE, KC_ENT) // raise
+#define KC_G_JA LGUI_T(KC_LANG1)    // cmd or win
+#define KC_G_EN LGUI_T(KC_LANG2)    // cmd or win
+#define KC_C_BS LCTL_T(KC_BSPC)     // ctrl
+#define KC_A_DEL ALT_T(KC_DEL)      // alt
 
 // add by suzukiz
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
 #define ADJUST MO(_ADJUST)
-#define KC_R_SPC LT(_RAISE, KC_SPC)  // raise
+#define KC_R_SPC LT(_RAISE, KC_SPC) // raise
 #define KC_BLSF RSFT_T(JP_BSLS)
 #define KC_DTAL RALT_T(KC_DOT)
 #define MC_BSLH A(JP_YEN)
@@ -68,7 +68,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|   |--------+--------+--------+--------+--------+--------|
      _______, JP_EXLM, _______, _______, KC_DEL , KC_ESC ,     JP_ASTR, JP_MINS, JP_LBRC, JP_RBRC, JP_PLUS, _______,
   //|--------+--------+--------+--------+--------+--------|   |--------+--------+--------+--------+--------+--------|
-     _______, _______, G(KC_X), G(KC_C),JP_MEISU,JP_MKANA,     JP_YEN , MC_BSLH, JP_LABK, JP_RABK, JP_UNDS, _______,
+     _______, _______, G(KC_X), G(KC_C),JP_EISU , JP_KANA,     JP_YEN , MC_BSLH, JP_LABK, JP_RABK, JP_UNDS, _______,
   //`--------+--------+--------+--------+--------+--------/   \--------+--------+--------+--------+--------+--------'
                        RESET  , _______, _______, _______,     _______,  ADJUST, _______, _______
   //                 `--------+--------+--------+--------'   `--------+--------+--------+--------'
@@ -141,8 +141,12 @@ void set_keylog(uint16_t keycode, keyrecord_t *record) {
     keylogs_str_idx++;
 }
 
-const char *read_keylog(void) { return keylog_str; }
-const char *read_keylogs(void) { return keylogs_str; }
+const char *read_keylog(void) {
+    return keylog_str;
+}
+const char *read_keylogs(void) {
+    return keylogs_str;
+}
 
 void oled_task_user(void) {
     if (is_keyboard_master()) {

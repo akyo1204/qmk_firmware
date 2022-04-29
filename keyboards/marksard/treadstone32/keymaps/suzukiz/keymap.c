@@ -97,7 +97,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
        JP_EXLM,  C(KC_S),  KC_LALT,   KC_DEL,   KC_ESC,  JP_ASTR,  JP_MINS,  JP_LBRC,  JP_RBRC,  JP_PLUS,
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
-       KC_LSFT,  C(KC_X),  C(KC_C),  KC_LCTL, JP_MKANA,   JP_YEN,  MC_BSLH,  JP_LABK,  JP_RABK,  JP_UNDS,
+       KC_LSFT,  C(KC_X),  C(KC_C),  KC_LCTL,  JP_KANA,   JP_YEN,  MC_BSLH,  JP_LABK,  JP_RABK,  JP_UNDS,
   //`---------+---------+---------+---------+---------+---------+---------+---------+---------+---------'
                                                _______,  KC_MLAD
   //                                        `---------|---------'
@@ -107,11 +107,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,---------------------------------------------------------------------------------------------------.
           KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
-       KC_LSFT,  KC_LCTL,  KC_HOME,  KC_PGUP,   KC_TAB,  JP_COLN,   KC_ENT,    KC_UP,    JP_AT,  JP_TILD,
+       KC_LGUI,  KC_LCTL,  KC_HOME,  KC_PGUP,   KC_TAB,  JP_COLN,   KC_ENT,    KC_UP,    JP_AT,  JP_TILD,
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
        KC_LSFT,  KC_LALT,   KC_END,  KC_PGDN,C(KC_TAB),  JP_PIPE,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_BLSF,
   //`---------+---------+---------+---------+---------+---------+---------+---------+---------+---------'
-                                               _______,  _______
+                                               KC_MLAD,  _______
   //                                        `---------|---------'
   ),
 

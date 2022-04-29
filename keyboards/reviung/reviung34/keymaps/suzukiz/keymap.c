@@ -49,14 +49,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_LOWER] = LAYOUT_reviung34(
     JP_DQUO, JP_HASH, JP_DLR,  JP_PERC, JP_AMPR,       JP_QUOT, JP_LPRN, JP_RPRN, JP_CIRC, JP_EQL,
-    JP_EXLM, KC_LGUI, KC_LCTL, KC_DEL,  KC_ESC,        JP_ASTR, JP_MINS, JP_LBRC, JP_RBRC, JP_PLUS,
-    KC_LSFT, KC_LALT, _______, JP_MEISU,JP_MKANA,      JP_YEN,  MC_BSLH, JP_LABK, JP_RABK, JP_UNDS,
+    JP_EXLM, KC_LCTL, KC_LALT, KC_DEL,  KC_ESC,        JP_ASTR, JP_MINS, JP_LBRC, JP_RBRC, JP_PLUS,
+    KC_LSFT, KC_LGUI, _______, JP_MEISU,JP_MKANA,      JP_YEN,  MC_BSLH, JP_LABK, JP_RABK, JP_UNDS,
                                _______, _______,       ADJUST,  _______
   ),
   
   [_RAISE] = LAYOUT_reviung34(
     KC_1,    KC_2,    KC_3,    KC_4,    KC_5,          KC_6,    KC_7,    KC_8,    KC_9,    KC_0,
-    C(KC_A), C(KC_E), KC_HOME, KC_PGUP, KC_TAB,        JP_COLN, KC_ENT,  KC_UP,   JP_AT,   JP_TILD,
+    KC_LGUI, KC_LCTL, KC_HOME, KC_PGUP, KC_TAB,        JP_COLN, KC_ENT,  KC_UP,   JP_AT,   JP_TILD,
     KC_LSFT, KC_LALT, KC_END,  KC_PGDN, C(KC_TAB),     JP_PIPE, KC_LEFT, KC_DOWN, KC_RGHT, KC_BLSF,
                                _______, ADJUST,        _______, _______
   ),

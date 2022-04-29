@@ -32,13 +32,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_RAISE] = LAYOUT( \
                 KC_SPC,   KC_TRNS, 
-     KC_SPC,    KC_ENT,   KC_BSPC,
+     KC_ENT,    KC_ESC,   KC_BSPC,
      KC_LCTL,   KC_LGUI,  KC_LSFT
   ),
   [_LOWER] = LAYOUT( \
-                KC_SPC,   KC_ESC,
-     KC_LSFT,   KC_TAB,   KC_TRNS,
-     KC_LCTL,   KC_LGUI,  KC_LALT
+                KC_SPC,   KC_DEL,
+     KC_TAB,    KC_LALT,  KC_TRNS,
+     KC_LCTL,   KC_LGUI,  KC_LSFT
   )
     // clang-format on
 };
@@ -214,12 +214,13 @@ void matrix_scan_user(void) {
         } else if (IS_LAYER_ON(_LOWER)) {
             curmove(y, x);
         } else {
-            float xs = fabs(x);
-            float ys = fabs(y);
-            xs       = fmax(1.0f, (xs / 30.0f));
-            ys       = fmax(1.0f, (ys / 25.0f));
-            float mx = fmin(127.0f, fmax(-127.0f, x * xs));
-            float my = fmin(127.0f, fmax(-127.0f, y * ys));
+            float spd = 1.5f;
+            float xs  = fabs(x);
+            float ys  = fabs(y);
+            xs        = fmax(1.0f, (xs / 20.0f));
+            ys        = fmax(1.0f, (ys / 15.0f));
+            float mx  = fmin(127.0f, fmax(-127.0f, x * xs * xs * spd));
+            float my  = fmin(127.0f, fmax(-127.0f, y * ys * ys * spd));
 
             // const float lowspd = 1.0f;
             // if (mx > lowspd)
