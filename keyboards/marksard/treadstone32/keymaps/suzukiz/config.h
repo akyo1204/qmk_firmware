@@ -20,7 +20,7 @@
 #define TAPPING_TERM 200
 #define IGNORE_MOD_TAP_INTERRUPT
 
-#define TAPPING_LAYER_TERM 150  // Custom LT Tapping term
+#define TAPPING_LAYER_TERM 150 // Custom LT Tapping term
 #define TAPPING_TERM_PER_KEY
 
 #define PERMISSIVE_HOLD
@@ -34,7 +34,7 @@
 #    define MOUSEKEY_TIME_TO_MAX 150
 
 #    undef MOUSEKEY_MAX_SPEED
-#    define MOUSEKEY_MAX_SPEED 3
+#    define MOUSEKEY_MAX_SPEED 2
 
 #    undef MOUSEKEY_MOVE_DELTA
 #    define MOUSEKEY_MOVE_DELTA 4
