@@ -17,10 +17,10 @@
 #pragma once
 
 // place overrides here
-#define TAPPING_TERM 200
+#define TAPPING_TERM 300
 #define IGNORE_MOD_TAP_INTERRUPT
 
-#define TAPPING_LAYER_TERM 150 // Custom LT Tapping term
+#define TAPPING_LAYER_TERM 200 // Custom LT Tapping term
 #define TAPPING_TERM_PER_KEY
 
 #define PERMISSIVE_HOLD

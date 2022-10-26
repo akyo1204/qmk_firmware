@@ -1,5 +1,5 @@
 #include QMK_KEYBOARD_H
-#include "keymap_jp.h"
+#include "keymap_japanese.h"
 
 #ifdef RGBLIGHT_ENABLE
 // Following line allows macro to read current RGB settings
@@ -37,6 +37,7 @@ enum custom_keycodes {
 #define KC_A_CT LCTL_T(KC_A)
 #define KC_Z_SF LSFT_T(KC_Z)
 #define KC_Z_CT LCTL_T(KC_Z)
+#define KC_Z_GU LGUI_T(KC_Z)
 #define KC_X_AL LALT_T(KC_X)
 #define KC_C_GU LGUI_T(KC_C)
 #define KC_SSCT RCTL_T(KC_SLSH)
@@ -48,8 +49,10 @@ enum custom_keycodes {
 #define KC_TICT RCTL_T(JP_TILD)
 #define KC_ENSF RSFT_T(KC_ENT)
 #define KC_DTAL RALT_T(KC_DOT)
-#define KC_CMGU RGUI_T(KC_COMM)
+#define KC_DTCT RCTL_T(KC_DOT)
+#define KC_CMGU LGUI_T(KC_COMM)
 #define KC_QUCT RCTL_T(JP_QUES)
+#define KC_QUSF RSFT_T(JP_QUES)
 #define KC_L_SF RSFT_T(KC_L)
 #define KC_L_CT RCTL_T(KC_L)
 #define KC_S_SF RSFT_T(KC_S)
@@ -58,7 +61,6 @@ enum custom_keycodes {
 // Lower layer mod tap
 #define KC_F6SF LSFT_T(KC_F6)
 #define KC_EXSF LSFT_T(JP_EXLM)
-#define KC_QUSF RSFT_T(KC_QUOT)
 #define KC_11CT LCTL_T(KC_F11)
 #define KC_12AL LALT_T(KC_F12)
 
@@ -85,7 +87,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
        KC_A_SF,  KC_S_CT,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,  KC_L_CT,  KC_SCSF,
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
-       KC_Z_SF,  KC_X_AL,  KC_C_GU,     KC_V,     KC_B,     KC_N,     KC_M,  KC_CMGU,  KC_DTAL,  KC_SSSF,
+          KC_Z,  KC_X_AL,  KC_C_GU,     KC_V,     KC_B,     KC_N,     KC_M,  KC_CMGU,  KC_DTAL,  KC_SSSF,
   //`---------+---------+---------+---------+---------+---------+---------+---------+---------+---------'
                                                KC_BSLO,  KC_SPRA
   //                                        `---------|---------'
@@ -97,7 +99,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
        JP_EXLM,  C(KC_S),  KC_LALT,   KC_DEL,   KC_ESC,  JP_ASTR,  JP_MINS,  JP_LBRC,  JP_RBRC,  JP_PLUS,
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
-       KC_LSFT,  C(KC_X),  C(KC_C),  KC_LCTL,  JP_KANA,   JP_YEN,  MC_BSLH,  JP_LABK,  JP_RABK,  JP_UNDS,
+       C(KC_Z),  C(KC_X),  C(KC_C),  KC_LCTL, KC_LANG1,   JP_YEN,  MC_BSLH,  JP_LABK,  JP_RABK,  JP_UNDS,
   //`---------+---------+---------+---------+---------+---------+---------+---------+---------+---------'
                                                _______,  KC_MLAD
   //                                        `---------|---------'
@@ -107,9 +109,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,---------------------------------------------------------------------------------------------------.
           KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
-       KC_LGUI,  KC_LCTL,  KC_HOME,  KC_PGUP,   KC_TAB,  JP_COLN,   KC_ENT,    KC_UP,    JP_AT,  JP_TILD,
+       KC_LSFT,  KC_LCTL,  KC_HOME,  KC_PGUP,   KC_TAB,  JP_COLN,   KC_ENT,    KC_UP,    JP_AT,  JP_TILD,
   //|---------+---------+---------+---------+---------+---------+---------+---------+---------+---------|
-       KC_LSFT,  KC_LALT,   KC_END,  KC_PGDN,C(KC_TAB),  JP_PIPE,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_BLSF,
+       KC_LGUI,  KC_LALT,   KC_END,  KC_PGDN,C(KC_TAB),  JP_PIPE,  KC_LEFT,  KC_DOWN,  KC_RGHT,  JP_QUES,
   //`---------+---------+---------+---------+---------+---------+---------+---------+---------+---------'
                                                KC_MLAD,  _______
   //                                        `---------|---------'

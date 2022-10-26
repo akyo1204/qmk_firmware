@@ -30,13 +30,13 @@ enum layer_names { _BASE, _LOWER, _RAISE, _ADJUST };
 #define AL_DT RALT_T(KC_DOT)
 #define RA_SP LT(RAISE, KC_SPC)
 
-#define KC_R_SPC LT(_RAISE, KC_SPC)  // raise
-#define KC_L_BS LT(_LOWER, KC_BSPC)  // raise
+#define KC_R_SPC LT(_RAISE, KC_SPC) // raise
+#define KC_L_BS LT(_LOWER, KC_BSPC) // raise
 #define KC_BLSF RSFT_T(JP_BSLS)
 #define KC_DTAL RALT_T(KC_DOT)
 #define MC_BSLH A(JP_YEN)
 #define KC_CMGU RGUI_T(KC_COMM)
-#define KC_C_BS LCTL_T(KC_BSPC)  // ctrl
+#define KC_C_BS LCTL_T(KC_BSPC) // ctrl
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -50,7 +50,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_LOWER] = LAYOUT_reviung34(
     JP_DQUO, JP_HASH, JP_DLR,  JP_PERC, JP_AMPR,       JP_QUOT, JP_LPRN, JP_RPRN, JP_CIRC, JP_EQL,
     JP_EXLM, KC_LCTL, KC_LALT, KC_DEL,  KC_ESC,        JP_ASTR, JP_MINS, JP_LBRC, JP_RBRC, JP_PLUS,
-    KC_LSFT, KC_LGUI, _______, JP_MEISU,JP_MKANA,      JP_YEN,  MC_BSLH, JP_LABK, JP_RABK, JP_UNDS,
+    KC_LSFT, KC_LGUI, _______, JP_EISU, KC_LNG1,       JP_YEN,  MC_BSLH, JP_LABK, JP_RABK, JP_UNDS,
                                _______, _______,       ADJUST,  _______
   ),
   
@@ -81,7 +81,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         case _ADJUST:
             rgblight_setrgb(0x00, 0xFF, 0x00);
             break;
-        default:  //  for any other layers, or the default layer
+        default: //  for any other layers, or the default layer
             rgblight_setrgb(0xA0, 0x00, 0xFF);
             break;
     }
