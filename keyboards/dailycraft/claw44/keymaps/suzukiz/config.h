@@ -20,7 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#define MASTER_LEFT
+// #define MASTER_LEFT
+#define MASTER_RIGHT
 #define OLED_FONT_H "keyboards/claw44/keymaps/suzukiz/glcdfont.c"
 
 #define TAPPING_TERM 200
@@ -33,3 +34,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MOUSEKEY_DELAY 50
 
 #define OLED_TIMEOUT 45000
+#define POINTING_DEVICE_TASK_THROTTLE_MS 1

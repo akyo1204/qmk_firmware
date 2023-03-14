@@ -1,6 +1,6 @@
 #include QMK_KEYBOARD_H
-#include <stdio.h>
 #include <keymap_japanese.h>
+#include <stdio.h>
 
 // Each layer gets a name for readability, which is then used in the keymap matrix below.
 // The underscores don't mean anything - you can have a layer called STUFF or any other name.
@@ -70,7 +70,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|   |--------+--------+--------+--------+--------+--------|
      _______, _______, G(KC_X), G(KC_C),JP_EISU , KC_LNG1,     JP_YEN , MC_BSLH, JP_LABK, JP_RABK, JP_UNDS, _______,
   //`--------+--------+--------+--------+--------+--------/   \--------+--------+--------+--------+--------+--------'
-                       RESET  , _______, _______, _______,     _______,  ADJUST, _______, _______
+                       _______, _______, _______, _______,     _______,  ADJUST, _______, _______
   //                 `--------+--------+--------+--------'   `--------+--------+--------+--------'
   ),
 
@@ -78,15 +78,89 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------+--------+--------+--------+--------+--------.   ,--------+--------+--------+--------+--------+--------.
      _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,       KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
   //|--------+--------+--------+--------+--------+--------|   |--------+--------+--------+--------+--------+--------|
-     _______, _______, _______, _______, _______, _______,     _______, KC_BTN1, KC_MS_U, KC_BTN2, _______, _______,
+     _______, _______, _______, KC_BTN2, KC_BTN1, _______,     _______, KC_BTN1, KC_MS_U, KC_BTN2, _______, _______,
   //|--------+--------+--------+--------+--------+--------|   |--------+--------+--------+--------+--------+--------|
      _______, _______, _______, _______, _______, _______,     _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______,
   //`--------+--------+--------+--------+--------+--------/   \--------+--------+--------+--------+--------+--------'
-                       RESET  , _______, _______, _______,     _______, _______, _______, _______
+                       QK_BOOT, _______, _______, _______,     _______, _______, _______, _______
   //                 `--------+--------+--------+--------'   `--------+--------+--------+--------'
   ),
 };
 // clang-format on
+static inline float limv(float v, float n) {
+    if (v > n)
+        v -= n;
+    else if (v < -n)
+        v += n;
+    else
+        v = 0.0f;
+    return v;
+}
+
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    if (IS_LAYER_ON(_LOWER)) {
+        mouse_report.v = mouse_report.y / 2;
+        mouse_report.h = mouse_report.x / 3;
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+    } else {
+        static float move_x   = 0.0f;
+        static float move_y   = 0.0f;
+        static int   move_cnt = 0;
+        static int   ms_mode  = 0;
+        float        mx       = 0.0f;
+        float        my       = 0.0f;
+#define MOVE_LIMIT 0.01f
+#define MOUSE_MODE_TIME 900
+
+        if (mouse_report.x == 0 && mouse_report.y == 0) {
+            move_x *= 0.955f;
+            move_y *= 0.955f;
+            if (move_cnt > 0) move_cnt--;
+            if (ms_mode > 0) {
+                if (--ms_mode == 0) {
+                    layer_off(_ADJUST);
+                }
+            }
+        }
+        {
+            float x   = (float)mouse_report.x * 0.5f;
+            float y   = (float)mouse_report.y * 0.5f;
+            float spd = fmax(1.0f, limv(sqrt(x * x + y * y), 1.5f));
+            move_x -= x * spd;
+            move_y -= y * spd;
+            if (spd < 2.0f) {
+                float l = sqrt(move_x * move_x + move_y * move_y);
+                if (l > MOVE_LIMIT) {
+                    mx = move_x / l;
+                    my = move_y / l;
+                }
+            }
+
+            mx = move_x;
+            my = move_y;
+        }
+
+        float mvspd = sqrt(move_x * move_x + move_y * move_y);
+        if (mvspd > MOVE_LIMIT) {
+            // マウスが動いている
+            if (ms_mode != 0 || ++move_cnt > 10) {
+                // 動き続けているか、モード継続中ならマウスモード
+                ms_mode = MOUSE_MODE_TIME;
+                layer_on(_ADJUST);
+            }
+        }
+        if (ms_mode == 0) {
+            // マウスモードではないなら動かさない
+            mx = 0.0f;
+            my = 0.0f;
+        }
+
+        mouse_report.x = mx;
+        mouse_report.y = my;
+    }
+    return mouse_report;
+}
 
 #ifdef OLED_DRIVER_ENABLE
 
