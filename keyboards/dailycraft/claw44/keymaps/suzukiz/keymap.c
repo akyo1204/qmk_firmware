@@ -14,6 +14,11 @@ enum layer_number {
     _ADJUST,
 };
 
+enum my_keycodes {
+    VSCROLL = SAFE_RANGE,
+    XSCROLL,
+};
+
 #define KC_ KC_TRNS
 #define KC_RST RESET
 #define KC_L_SPC LT(_LOWER, KC_SPC) // lower
@@ -78,7 +83,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------+--------+--------+--------+--------+--------.   ,--------+--------+--------+--------+--------+--------.
      _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,       KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
   //|--------+--------+--------+--------+--------+--------|   |--------+--------+--------+--------+--------+--------|
-     _______, _______, _______, KC_BTN2, KC_BTN1, _______,     _______, KC_BTN1, KC_MS_U, KC_BTN2, _______, _______,
+     _______, XSCROLL, VSCROLL, KC_BTN2, KC_BTN1, _______,     _______, KC_BTN1, KC_MS_U, KC_BTN2, _______, _______,
   //|--------+--------+--------+--------+--------+--------|   |--------+--------+--------+--------+--------+--------|
      _______, _______, _______, _______, _______, _______,     _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______,
   //`--------+--------+--------+--------+--------+--------/   \--------+--------+--------+--------+--------+--------'
@@ -97,10 +102,29 @@ static inline float limv(float v, float n) {
     return v;
 }
 
+static bool onVScrollMode = false;
+static bool onScrollMode  = false;
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (keycode == VSCROLL) {
+        onVScrollMode = record->event.pressed;
+        return false;
+    } else if (keycode == XSCROLL) {
+        onScrollMode = record->event.pressed;
+        return false;
+    }
+    return true;
+}
+
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    if (IS_LAYER_ON(_LOWER)) {
-        mouse_report.v = mouse_report.y / 2;
-        mouse_report.h = mouse_report.x / 3;
+    if (onVScrollMode) {
+        mouse_report.v = mouse_report.y / 3;
+        mouse_report.h = 0;
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+    } else if (onScrollMode) {
+        mouse_report.v = mouse_report.y / 3;
+        mouse_report.h = mouse_report.x / 4;
         mouse_report.x = 0;
         mouse_report.y = 0;
     } else {
