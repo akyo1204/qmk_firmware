@@ -92,6 +92,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 // clang-format on
+
 static inline float limv(float v, float n) {
     if (v > n)
         v -= n;
@@ -102,8 +103,14 @@ static inline float limv(float v, float n) {
     return v;
 }
 
+#define MOUSE_MODE_TIME 900
+#define MOVE_SCALE 0.5f
+#define ACCEL_SCALE 4.0f
+#define MOVE_LIMIT 0.01f
+
 static bool onVScrollMode = false;
 static bool onScrollMode  = false;
+static int  onMouseMode   = 0;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (keycode == VSCROLL) {
@@ -112,6 +119,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     } else if (keycode == XSCROLL) {
         onScrollMode = record->event.pressed;
         return false;
+    } else if (keycode == KC_BTN1) {
+        if (onMouseMode != 0) {
+            // マウスモード中にボタンが押されたらモード継続
+            onMouseMode = MOUSE_MODE_TIME;
+        }
     }
     return true;
 }
@@ -131,36 +143,35 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         static float move_x   = 0.0f;
         static float move_y   = 0.0f;
         static int   move_cnt = 0;
-        static int   ms_mode  = 0;
         float        mx       = 0.0f;
         float        my       = 0.0f;
-#define MOVE_LIMIT 0.01f
-#define MOUSE_MODE_TIME 900
 
         if (mouse_report.x == 0 && mouse_report.y == 0) {
             move_x *= 0.955f;
             move_y *= 0.955f;
             if (move_cnt > 0) move_cnt--;
-            if (ms_mode > 0) {
-                if (--ms_mode == 0) {
+            if (onMouseMode > 0) {
+                if (--onMouseMode == 0) {
                     layer_off(_ADJUST);
                 }
             }
         }
         {
-            float x   = (float)mouse_report.x * 0.5f;
-            float y   = (float)mouse_report.y * 0.5f;
-            float spd = fmax(1.0f, limv(sqrt(x * x + y * y), 1.5f));
+            float x   = (float)mouse_report.x * MOVE_SCALE;
+            float y   = (float)mouse_report.y * MOVE_SCALE;
+            float spd = fmax(1.0f, limv(sqrt(x * x + y * y), ACCEL_SCALE));
             move_x -= x * spd;
             move_y -= y * spd;
+#if 0
             if (spd < 2.0f) {
+                // ゆっくり動かしたとき
                 float l = sqrt(move_x * move_x + move_y * move_y);
                 if (l > MOVE_LIMIT) {
                     mx = move_x / l;
                     my = move_y / l;
                 }
             }
-
+#endif
             mx = move_x;
             my = move_y;
         }
@@ -168,13 +179,13 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         float mvspd = sqrt(move_x * move_x + move_y * move_y);
         if (mvspd > MOVE_LIMIT) {
             // マウスが動いている
-            if (ms_mode != 0 || ++move_cnt > 10) {
+            if (onMouseMode != 0 || ++move_cnt > 10) {
                 // 動き続けているか、モード継続中ならマウスモード
-                ms_mode = MOUSE_MODE_TIME;
+                onMouseMode = MOUSE_MODE_TIME;
                 layer_on(_ADJUST);
             }
         }
-        if (ms_mode == 0) {
+        if (onMouseMode == 0) {
             // マウスモードではないなら動かさない
             mx = 0.0f;
             my = 0.0f;
