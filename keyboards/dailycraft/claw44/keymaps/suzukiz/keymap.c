@@ -81,36 +81,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ADJUST] = LAYOUT( \
   //,--------+--------+--------+--------+--------+--------.   ,--------+--------+--------+--------+--------+--------.
-     _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,       KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
+     QK_BOOT, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,       KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
   //|--------+--------+--------+--------+--------+--------|   |--------+--------+--------+--------+--------+--------|
-     _______, XSCROLL, VSCROLL, KC_BTN2, KC_BTN1, _______,     _______, KC_BTN1, KC_MS_U, KC_BTN2, _______, _______,
+     _______, XSCROLL, VSCROLL, KC_BTN2, KC_BTN1, _______,     KC_BTN1, KC_BTN1, KC_MS_U, KC_BTN2, _______, _______,
   //|--------+--------+--------+--------+--------+--------|   |--------+--------+--------+--------+--------+--------|
-     _______, _______, _______, _______, _______, _______,     _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______,
+     _______, _______, _______, _______, _______, C(KC_TAB),   _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______,
   //`--------+--------+--------+--------+--------+--------/   \--------+--------+--------+--------+--------+--------'
-                       QK_BOOT, _______, _______, _______,     _______, _______, _______, _______
+                       _______, _______, _______, _______,     _______, _______, VSCROLL, _______
   //                 `--------+--------+--------+--------'   `--------+--------+--------+--------'
   ),
 };
 // clang-format on
 
 static inline float limv(float v, float n) {
-    if (v > n)
-        v -= n;
-    else if (v < -n)
-        v += n;
-    else
-        v = 0.0f;
-    return v;
+    return (v > n) ? (v - n) : ((v < -n) ? (v + n) : 0.0f);
 }
 
 #define MOUSE_MODE_TIME 900
 #define MOVE_SCALE 0.5f
 #define ACCEL_SCALE 4.0f
 #define MOVE_LIMIT 0.01f
+#define MOUSE_MOVE_DECAY 0.955f
+#define MOVE_COUNT_THRESHOLD 10
 
-static bool onVScrollMode = false;
-static bool onScrollMode  = false;
-static int  onMouseMode   = 0;
+static bool onVScrollMode          = false;
+static bool onScrollMode           = false;
+static int  mouseModeRemainingTime = 0;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (keycode == VSCROLL) {
@@ -120,9 +116,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         onScrollMode = record->event.pressed;
         return false;
     } else if (keycode == KC_BTN1) {
-        if (onMouseMode != 0) {
+        if (mouseModeRemainingTime != 0) {
             // マウスモード中にボタンが押されたらモード継続
-            onMouseMode = MOUSE_MODE_TIME;
+            mouseModeRemainingTime = MOUSE_MODE_TIME;
         }
     }
     return true;
@@ -147,11 +143,11 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         float        my       = 0.0f;
 
         if (mouse_report.x == 0 && mouse_report.y == 0) {
-            move_x *= 0.955f;
-            move_y *= 0.955f;
+            move_x *= MOUSE_MOVE_DECAY;
+            move_y *= MOUSE_MOVE_DECAY;
             if (move_cnt > 0) move_cnt--;
-            if (onMouseMode > 0) {
-                if (--onMouseMode == 0) {
+            if (mouseModeRemainingTime > 0) {
+                if (--mouseModeRemainingTime == 0) {
                     layer_off(_ADJUST);
                 }
             }
@@ -162,16 +158,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
             float spd = fmax(1.0f, limv(sqrt(x * x + y * y), ACCEL_SCALE));
             move_x -= x * spd;
             move_y -= y * spd;
-#if 0
-            if (spd < 2.0f) {
-                // ゆっくり動かしたとき
-                float l = sqrt(move_x * move_x + move_y * move_y);
-                if (l > MOVE_LIMIT) {
-                    mx = move_x / l;
-                    my = move_y / l;
-                }
-            }
-#endif
+
             mx = move_x;
             my = move_y;
         }
@@ -179,13 +166,13 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         float mvspd = sqrt(move_x * move_x + move_y * move_y);
         if (mvspd > MOVE_LIMIT) {
             // マウスが動いている
-            if (onMouseMode != 0 || ++move_cnt > 10) {
+            if (mouseModeRemainingTime != 0 || ++move_cnt > MOVE_COUNT_THRESHOLD) {
                 // 動き続けているか、モード継続中ならマウスモード
-                onMouseMode = MOUSE_MODE_TIME;
+                mouseModeRemainingTime = MOUSE_MODE_TIME;
                 layer_on(_ADJUST);
             }
         }
-        if (onMouseMode == 0) {
+        if (mouseModeRemainingTime == 0) {
             // マウスモードではないなら動かさない
             mx = 0.0f;
             my = 0.0f;
