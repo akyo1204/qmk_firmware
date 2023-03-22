@@ -106,6 +106,7 @@ static inline float limv(float v, float n) {
 
 static bool onVScrollMode          = false;
 static bool onScrollMode           = false;
+static int  mouseMoveCount         = 0;
 static int  mouseModeRemainingTime = 0;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -119,6 +120,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (mouseModeRemainingTime != 0) {
             // マウスモード中にボタンが押されたらモード継続
             mouseModeRemainingTime = MOUSE_MODE_TIME;
+        }
+    } else if (keycode == LOWER || keycode == KC_R_SPC) {
+        if (record->event.pressed && mouseModeRemainingTime != 0 && IS_LAYER_ON(_ADJUST)) {
+            // トラックボールを動かしたことによる_ADJUSTレイヤーなら、レイヤーキーによってキャンセルする
+            mouseModeRemainingTime = 0;
+            mouseMoveCount         = 0;
+            layer_off(_ADJUST);
         }
     }
     return true;
@@ -136,16 +144,15 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         mouse_report.x = 0;
         mouse_report.y = 0;
     } else {
-        static float move_x   = 0.0f;
-        static float move_y   = 0.0f;
-        static int   move_cnt = 0;
-        float        mx       = 0.0f;
-        float        my       = 0.0f;
+        static float move_x = 0.0f;
+        static float move_y = 0.0f;
+        float        mx     = 0.0f;
+        float        my     = 0.0f;
 
         if (mouse_report.x == 0 && mouse_report.y == 0) {
             move_x *= MOUSE_MOVE_DECAY;
             move_y *= MOUSE_MOVE_DECAY;
-            if (move_cnt > 0) move_cnt--;
+            if (mouseMoveCount > 0) mouseMoveCount--;
             if (mouseModeRemainingTime > 0) {
                 if (--mouseModeRemainingTime == 0) {
                     layer_off(_ADJUST);
@@ -166,10 +173,12 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         float mvspd = sqrt(move_x * move_x + move_y * move_y);
         if (mvspd > MOVE_LIMIT) {
             // マウスが動いている
-            if (mouseModeRemainingTime != 0 || ++move_cnt > MOVE_COUNT_THRESHOLD) {
+            if (mouseModeRemainingTime != 0 || ++mouseMoveCount > MOVE_COUNT_THRESHOLD) {
                 // 動き続けているか、モード継続中ならマウスモード
+                if (mouseModeRemainingTime == 0) {
+                    layer_on(_ADJUST);
+                }
                 mouseModeRemainingTime = MOUSE_MODE_TIME;
-                layer_on(_ADJUST);
             }
         }
         if (mouseModeRemainingTime == 0) {
